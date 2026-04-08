@@ -62,3 +62,5 @@ GoWhoAteMyCPU focuses on:
 * output a simple explanation
 
 
+This project is being built for the  
+[Rebuilding the OS: Core System Utilities Hackathon](https://bitbuilders-code-race-apr-2026.devpost.com/?_gl=1*1lql3uk*_gcl_au*MTA5ODE1NDk0LjE3NzU2Nzk3MTU.*_ga*MTQ2NDUzMTY5NC4xNzc1Njc5NzE1*_ga_0YHJK3Y10M*czE3NzU2ODk1NzckbzMkZzEkdDE3NzU2OTI2NTIkajE2JGwwJGgw)
