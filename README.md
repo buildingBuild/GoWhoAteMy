@@ -13,12 +13,12 @@ This tool GOs through it (pun intended)
 ## Features
 
 * real-time process monitoring (CPU + memory)
-* tracks process behavior over time (not just snapshots)
+* tracks process behavior over time 
 * detects CPU spikes and abnormal usage
 * flags processes with steady memory growth
 * identifies the main process causing slowdown
 * simple, readable explanations instead of raw stats
-* lightweight CLI (no heavy UI, no noise)
+* lightweight CLI 
 
 ---
 
