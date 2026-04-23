@@ -16,19 +16,14 @@ type CPUSnapshot struct {
 	Time       time.Time
 }
 
-func monitorCpu() {
-
-	log.Println("Starting CPU monitor...")
+func monitorCPUSnapshot() ([]CPUSnapshot, error) {
 	allProcesses, err := process.Processes()
-
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return nil, err
 	}
 
 	for _, p := range allProcesses {
-		p.CPUPercent()
-
+		_, _ = p.CPUPercent()
 	}
 
 	time.Sleep(1 * time.Second)
@@ -55,12 +50,52 @@ func monitorCpu() {
 		return snapshots[i].CPUPercent > snapshots[j].CPUPercent
 	})
 
-	limit := 10
-	if len(snapshots) < limit {
-		limit = len(snapshots)
-	}
+	return snapshots, nil
+}
 
-	for _, s := range snapshots[:limit] {
-		fmt.Println(s.PID, s.Name, s.CPUPercent)
+func detectSpikes(current []CPUSnapshot, previous map[int32]CPUSnapshot) {
+	for _, cur := range current {
+		prev, ok := previous[cur.PID]
+		if !ok {
+			continue
+		}
+
+		delta := cur.CPUPercent - prev.CPUPercent
+		if delta >= 15.0 {
+			fmt.Printf("SPIKE: pid=%d name=%s prev=%.2f current=%.2f delta=%.2f\n",
+				cur.PID, cur.Name, prev.CPUPercent, cur.CPUPercent, delta)
+		}
+	}
+}
+
+func monitorCpu() {
+	log.Println("Starting CPU monitor...")
+	previousSnapshots := map[int32]CPUSnapshot{}
+
+	for {
+
+		currentSnapshots, err := monitorCPUSnapshot()
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		detectSpikes(currentSnapshots, previousSnapshots)
+
+		limit := 10
+		if len(currentSnapshots) < limit {
+			limit = len(currentSnapshots)
+		}
+
+		for _, s := range currentSnapshots[:limit] {
+			fmt.Println(s.PID, s.Name, s.CPUPercent)
+		}
+
+		previousSnapshots = make(map[int32]CPUSnapshot)
+		for _, s := range currentSnapshots {
+			previousSnapshots[s.PID] = s
+		}
+
+		time.Sleep(10 * time.Second)
 	}
 }
