@@ -1,30 +1,66 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"os/exec"
+	"sort"
 	"time"
+
+	"github.com/shirou/gopsutil/process"
 )
 
 type CPUSnapshot struct {
-	PID  int32
-	Name string
-	CPU  float64
-	Time time.Time
-} // will capture every second
+	PID        int32
+	Name       string
+	CPUPercent float64
+	Time       time.Time
+}
 
 func monitorCpu() {
-	log.Println("Starting CPU monitor...")
-	for {
-		out, err := exec.Command("top", "-l1", "-s0").Output()
 
-		if err != nil {
-			log.Println("Error:", err)
-			time.Sleep(1 * time.Second)
-			continue
-		}
-		log.Printf("CPU Stats:\n%s", string(out))
-		time.Sleep(1 * time.Second)
+	log.Println("Starting CPU monitor...")
+	allProcesses, err := process.Processes()
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
 
+	for _, p := range allProcesses {
+		p.CPUPercent()
+
+	}
+
+	time.Sleep(1 * time.Second)
+
+	snapshots := []CPUSnapshot{}
+
+	for _, p := range allProcesses {
+		cpu, err := p.CPUPercent()
+		if err != nil {
+			continue
+		}
+
+		name, _ := p.Name()
+
+		snapshots = append(snapshots, CPUSnapshot{
+			PID:        p.Pid,
+			Name:       name,
+			CPUPercent: cpu,
+			Time:       time.Now(),
+		})
+	}
+
+	sort.Slice(snapshots, func(i, j int) bool {
+		return snapshots[i].CPUPercent > snapshots[j].CPUPercent
+	})
+
+	limit := 10
+	if len(snapshots) < limit {
+		limit = len(snapshots)
+	}
+
+	for _, s := range snapshots[:limit] {
+		fmt.Println(s.PID, s.Name, s.CPUPercent)
+	}
 }
