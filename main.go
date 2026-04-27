@@ -26,8 +26,14 @@ func main() {
 	}
 	for {
 		displayPrompt()
+
 		var mode int
-		fmt.Scan(&mode)
+
+		_, err := fmt.Scan(&mode)
+		if err != nil {
+			fmt.Println("Please enter a number")
+			continue
+		}
 
 		switch mode {
 		case 1:
@@ -37,10 +43,11 @@ func main() {
 			fmt.Println("Memory Monitoring Mode: ")
 		case 3:
 			fmt.Println("Network Monitoring Mode: ")
+			monitorNetwork()
 		case 5:
 			fmt.Println("Hybrid Monitoring Mode: ")
 		default:
-			fmt.Println("")
+			fmt.Println("ERROR ERROR ERROR")
 		}
 	}
 }
