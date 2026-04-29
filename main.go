@@ -24,6 +24,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Could not get device info: ", err)
 		os.Exit(1)
 	}
+
 	for {
 		displayPrompt()
 
@@ -41,6 +42,7 @@ func main() {
 			monitorCpu()
 		case 2:
 			fmt.Println("Memory Monitoring Mode: ")
+			monitorMemorySnapshot()
 		case 3:
 			fmt.Println("Network Monitoring Mode: ")
 			monitorNetwork()
