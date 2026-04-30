@@ -71,8 +71,11 @@ func detectMemoryGrowth(current []MemorySnapshot, previous map[int32]MemorySnaps
 
 		growth := cur.RSSBytes - prev.RSSBytes
 		if growth >= 100*1024*1024 {
+			message := fmt.Sprintf("%s grew by %.1f MB", cur.Name, bytesToMB(growth))
+
 			fmt.Printf("MEMORY GROWTH: pid=%d name=%s grew by %.1f MB\n",
 				cur.PID, cur.Name, bytesToMB(growth))
+			go sendNotification("GoWhoAteMyCPU Memory Alert", message)
 		}
 	}
 }

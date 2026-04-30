@@ -61,8 +61,12 @@ func detectSpikes(current []CPUSnapshot, previous map[int32]CPUSnapshot) {
 
 		delta := cur.CPUPercent - prev.CPUPercent
 		if delta >= 15.0 {
+			message := fmt.Sprintf("%s CPU jumped from %.2f%% to %.2f%% (+%.2f%%)",
+				cur.Name, prev.CPUPercent, cur.CPUPercent, delta)
+
 			fmt.Printf("SPIKE: pid=%d name=%s prev=%.2f current=%.2f delta=%.2f\n",
 				cur.PID, cur.Name, prev.CPUPercent, cur.CPUPercent, delta)
+			go sendNotification("GoWhoAteMyCPU CPU Alert", message)
 		}
 	}
 }

@@ -12,16 +12,29 @@ func monitorHybrid() {
 
 	previousCPUSnapshots := map[int32]CPUSnapshot{}
 	previousMemorySnapshots := map[int32]MemorySnapshot{}
+	previousNetworkPorts := map[string]bool{}
+	previousNetworkConnections := map[int32]int{}
 
 	for {
 		fmt.Println("\n--- Hybrid Snapshot ---")
 		monitorCpuHybrid(previousCPUSnapshots)
 		monitorMemoryHybrid(previousMemorySnapshots)
 		fmt.Println("\nNetwork activity:")
-		monitorNetwork()
+		monitorNetworkHybrid(previousNetworkPorts, previousNetworkConnections)
 
 		time.Sleep(100 * time.Second)
 	}
+}
+
+func monitorNetworkHybrid(previousPorts map[string]bool, previousConnections map[int32]int) {
+	currentSnapshots, err := monitorNetworkSnapshot()
+	if err != nil {
+		fmt.Println("Network error:", err)
+		return
+	}
+
+	detectNetworkChanges(currentSnapshots, previousPorts, previousConnections)
+	printNetworkReport(currentSnapshots)
 }
 
 func monitorCpuHybrid(previousSnapshots map[int32]CPUSnapshot) {
@@ -55,10 +68,23 @@ func monitorMemoryHybrid(previousSnapshots map[int32]MemorySnapshot) {
 		return
 	}
 
+	if virtualMemory.UsedPercent >= 85 {
+		message := fmt.Sprintf("Memory usage is %.2f%%. Available memory is %.1f GB.",
+			virtualMemory.UsedPercent,
+			bytesToGB(virtualMemory.Available),
+		)
+		go sendNotification("GoWhoAteMyCPU Memory Pressure", message)
+	}
+
 	swapMemory, err := mem.SwapMemory()
 	if err != nil {
 		fmt.Println("Swap error:", err)
 		return
+	}
+
+	if swapMemory.UsedPercent >= 50 {
+		message := fmt.Sprintf("Swap is %.2f%% used. Your Mac may feel slower.", swapMemory.UsedPercent)
+		go sendNotification("GoWhoAteMyCPU Swap Alert", message)
 	}
 
 	currentSnapshots, err := monitorMemorySnapshot()
