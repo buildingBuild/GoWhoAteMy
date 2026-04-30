@@ -59,6 +59,7 @@ GoWhoAteMyCPU focuses on:
 
 ## How to run
 
+> full macOS-first support. Some features, like system notifications and system info may not work on Windows yet.
 ```bash
 go build -o gowhoatemy .
 ./gowhoatemy --computer
