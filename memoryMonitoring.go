@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"time"
 
@@ -79,62 +78,25 @@ func detectMemoryGrowth(current []MemorySnapshot, previous map[int32]MemorySnaps
 }
 
 func monitorMemory() {
-	log.Println("Starting memory monitor...")
-	previousSnapshots := map[int32]MemorySnapshot{}
-
-	for {
-		virtualMemory, err := mem.VirtualMemory()
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		swapMemory, err := mem.SwapMemory()
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		currentSnapshots, err := monitorMemorySnapshot()
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		fmt.Printf("\nSystem memory: %.2f%% used, %.1f GB available\n",
-			virtualMemory.UsedPercent,
-			bytesToGB(virtualMemory.Available),
-		)
-		fmt.Printf("Swap: %.2f%% used, %.1f GB used\n",
-			swapMemory.UsedPercent,
-			bytesToGB(swapMemory.Used),
-		)
-
-		detectMemoryGrowth(currentSnapshots, previousSnapshots)
-
-		limit := 10
-		if len(currentSnapshots) < limit {
-			limit = len(currentSnapshots)
-		}
-
-		fmt.Println("\nTop memory processes:")
-		for _, s := range currentSnapshots[:limit] {
-			fmt.Printf("pid=%d name=%s memory=%.1f MB ram=%.2f%% swap=%.1f MB\n",
-				s.PID,
-				s.Name,
-				bytesToMB(s.RSSBytes),
-				s.MemoryPercent,
-				bytesToMB(s.SwapBytes),
-			)
-		}
-
-		previousSnapshots = make(map[int32]MemorySnapshot)
-		for _, s := range currentSnapshots {
-			previousSnapshots[s.PID] = s
-		}
-
-		time.Sleep(10 * time.Second)
+	virtualMemory, err := mem.VirtualMemory()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
+
+	swapMemory, err := mem.SwapMemory()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	currentSnapshots, err := monitorMemorySnapshot()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	printMemoryReport(currentSnapshots, virtualMemory.UsedPercent, virtualMemory.Available, swapMemory.UsedPercent, swapMemory.Used)
 }
 
 func bytesToMB(bytes uint64) float64 {
@@ -143,4 +105,32 @@ func bytesToMB(bytes uint64) float64 {
 
 func bytesToGB(bytes uint64) float64 {
 	return float64(bytes) / 1024 / 1024 / 1024
+}
+
+func printMemoryReport(currentSnapshots []MemorySnapshot, memoryUsedPercent float64, memoryAvailable uint64, swapUsedPercent float64, swapUsed uint64) {
+	fmt.Printf("\nSystem memory: %.2f%% used, %.1f GB available\n",
+		memoryUsedPercent,
+		bytesToGB(memoryAvailable),
+	)
+	fmt.Printf("Swap: %.2f%% used, %.1f GB used\n",
+		swapUsedPercent,
+		bytesToGB(swapUsed),
+	)
+	fmt.Println("Context: Swap means disk space used as backup memory when RAM is tight. High swap can make the computer feel slow.")
+
+	limit := 10
+	if len(currentSnapshots) < limit {
+		limit = len(currentSnapshots)
+	}
+
+	fmt.Println("\nTop memory processes:")
+	for _, s := range currentSnapshots[:limit] {
+		fmt.Printf("pid=%d name=%s memory=%.1f MB ram=%.2f%% swap=%.1f MB\n",
+			s.PID,
+			s.Name,
+			bytesToMB(s.RSSBytes),
+			s.MemoryPercent,
+			bytesToMB(s.SwapBytes),
+		)
+	}
 }

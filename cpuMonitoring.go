@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"time"
 
@@ -69,33 +68,19 @@ func detectSpikes(current []CPUSnapshot, previous map[int32]CPUSnapshot) {
 }
 
 func monitorCpu() {
-	log.Println("Starting CPU monitor...")
-	previousSnapshots := map[int32]CPUSnapshot{}
+	currentSnapshots, err := monitorCPUSnapshot()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	for {
+	limit := 10
+	if len(currentSnapshots) < limit {
+		limit = len(currentSnapshots)
+	}
 
-		currentSnapshots, err := monitorCPUSnapshot()
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		detectSpikes(currentSnapshots, previousSnapshots)
-
-		limit := 10
-		if len(currentSnapshots) < limit {
-			limit = len(currentSnapshots)
-		}
-
-		for _, s := range currentSnapshots[:limit] {
-			fmt.Println(s.PID, s.Name, s.CPUPercent)
-		}
-
-		previousSnapshots = make(map[int32]CPUSnapshot)
-		for _, s := range currentSnapshots {
-			previousSnapshots[s.PID] = s
-		}
-
-		time.Sleep(10 * time.Second)
+	fmt.Println("Top CPU processes:")
+	for _, s := range currentSnapshots[:limit] {
+		fmt.Printf("pid=%d name=%s cpu=%.2f%%\n", s.PID, s.Name, s.CPUPercent)
 	}
 }

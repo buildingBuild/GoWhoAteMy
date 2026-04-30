@@ -42,12 +42,13 @@ func main() {
 			monitorCpu()
 		case 2:
 			fmt.Println("Memory Monitoring Mode: ")
-			monitorMemorySnapshot()
+			monitorMemory()
 		case 3:
 			fmt.Println("Network Monitoring Mode: ")
 			monitorNetwork()
 		case 5:
 			fmt.Println("Hybrid Monitoring Mode: ")
+			monitorHybrid()
 		default:
 			fmt.Println("ERROR ERROR ERROR")
 		}
