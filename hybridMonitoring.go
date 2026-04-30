@@ -7,8 +7,12 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-func monitorHybrid() {
-	fmt.Println("Hybrid Monitoring Mode running. Press Ctrl+C to stop.")
+func monitorHybrid(intervalSeconds int) {
+	if intervalSeconds <= 0 {
+		intervalSeconds = 10
+	}
+
+	fmt.Println("Hybrid Monitoring Mode running. Ctrl+C to stop.")
 
 	previousCPUSnapshots := map[int32]CPUSnapshot{}
 	previousMemorySnapshots := map[int32]MemorySnapshot{}
@@ -22,7 +26,7 @@ func monitorHybrid() {
 		fmt.Println("\nNetwork activity:")
 		monitorNetworkHybrid(previousNetworkPorts, previousNetworkConnections)
 
-		time.Sleep(100 * time.Second)
+		time.Sleep(time.Duration(intervalSeconds) * time.Second)
 	}
 }
 

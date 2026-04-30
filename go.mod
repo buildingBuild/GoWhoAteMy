@@ -2,7 +2,10 @@ module go-who-ate-my-cpu
 
 go 1.26.1
 
-require github.com/shirou/gopsutil v3.21.11+incompatible
+require (
+	github.com/alecthomas/kong v1.15.0
+	github.com/shirou/gopsutil v3.21.11+incompatible
+)
 
 require (
 	github.com/go-ole/go-ole v1.2.6 // indirect

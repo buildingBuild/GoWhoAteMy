@@ -1,10 +1,10 @@
-# GoWhoAteMyCPU
+# GoWhoAteMy
 
-GoWhoAteMyCPU is a CLI tool that helps answer a simple question:
+GoWhoAteMy is a CLI tool that helps answer a simple question:
 
-**who is eating my CPU right now?**
+**what is slowing my computer down right now?**
 
-When your system starts lagging, tools like `top` or Activity Monitor give you raw metrics  but they don’t tell you what actually caused the problem. CPU stats, logs, and system metrics get annoying when its just numbers
+When your system starts lagging, you usually have to jump between a bunch of tools: `top` for CPU, Activity Monitor for memory, network commands for ports, and logs for clues. Even then, you mostly get dumped raw numbers instead of a clear answer about what changed and which process is responsible.
 
 This tool GOs through it (pun intended) 
 
@@ -12,14 +12,14 @@ This tool GOs through it (pun intended)
 
 ## Features
 
-* real-time process monitoring (CPU + memory + networking)
-* tracks process behavior over time 
-* detects CPU spikes and abnormal usage
-* flags processes with steady memory growth
+* real-time process monitoring for CPU, memory, and networking
+* tracks process behavior over time
+* detects CPU spikes, memory growth, high swap usage, and network changes
+* flags abnormal things like sudden resource jumps and new listening ports
 * identifies the main process causing slowdown
-* sends notifications when abnormal usage is detected
+* notification system for important alerts
 * simple, readable explanations instead of raw stats
-* lightweight CLI 
+* lightweight CLI
 
 ---
 
@@ -45,6 +45,47 @@ GoWhoAteMyCPU focuses on:
 * output a simple explanation
 * send out important notifications
 (Fully supports mac)
+
+---
+
+## Tech stack
+
+* Go
+* gopsutil for CPU, memory, disk, process, and network metrics
+* macOS `osascript` for system notifications
+* Kong for cli management
+
+---
+
+## How to run
+
+```bash
+go build -o gowhoatemy .
+./gowhoatemy --computer
+```
+
+To install it somewhere on your `PATH`, build it into a path folder like `~/bin`:
+
+```bash
+go build -o ~/bin/gowhoatemy .
+```
+
+Then run it from anywhere:
+
+```bash
+gowhoatemy --computer
+```
+
+Available flags:
+
+```bash
+gowhoatemy --cpu                         # shows CPU metrics
+gowhoatemy --memory                      # shows memory metrics
+gowhoatemy --network                     # shows network metrics
+gowhoatemy --computer                    # shows all computer metrics and sends notifications every 10 seconds
+gowhoatemy --computer --interval 20      # shows all computer metrics and checks every 20 seconds
+gowhoatemy --help                        # shows available flags
+```
 
 
 This project is being built for the  

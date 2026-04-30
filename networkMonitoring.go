@@ -142,11 +142,13 @@ func printNetworkReport(snapshots []NetworkSnapshot) {
 func detectNetworkChanges(current []NetworkSnapshot, previousPorts map[string]bool, previousConnections map[int32]int) {
 	currentPorts := map[string]NetworkPortEvent{}
 	currentConnections := map[int32]int{}
+	processNames := map[int32]string{}
 	hasPreviousPorts := len(previousPorts) > 0
 	hasPreviousConnections := len(previousConnections) > 0
 
 	for _, snapshot := range current {
 		currentConnections[snapshot.PID] = snapshot.EstablishedTCPConns + snapshot.EstablishedUDPConns
+		processNames[snapshot.PID] = snapshot.Name
 
 		for _, port := range snapshot.TCPListeningPorts {
 			event := NetworkPortEvent{
@@ -183,7 +185,12 @@ func detectNetworkChanges(current []NetworkSnapshot, previousPorts map[string]bo
 	for pid, count := range currentConnections {
 		previousCount := previousConnections[pid]
 		if hasPreviousConnections && count > previousCount {
-			message := fmt.Sprintf("pid=%d opened %d new established network connection(s)", pid, count-previousCount)
+			name := processNames[pid]
+			if name == "" {
+				name = fmt.Sprintf("pid=%d", pid)
+			}
+
+			message := fmt.Sprintf("%s opened %d new established network connection(s)", name, count-previousCount)
 			fmt.Println("NETWORK CHANGE:", message)
 			go sendNotification("GoWhoAteMyCPU Connection Alert", message)
 		}

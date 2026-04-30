@@ -16,7 +16,6 @@ func displayPrompt() {
 	fmt.Println("2. Memory Monitoring Mode:")
 	fmt.Println("3. Network Monitoring Mode:")
 	fmt.Println("5. Hybrid Monitoring Mode:")
-	fmt.Println("6. Rewind Time:")
 	fmt.Print("Select a Mode: ")
 
 }

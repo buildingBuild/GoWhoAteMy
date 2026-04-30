@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/alecthomas/kong"
 )
 
 type DeviceInfo struct {
@@ -16,41 +18,32 @@ type DeviceInfo struct {
 	MemoryUsedPercent float64
 }
 
+type CommandLineOptions struct {
+	CPU             bool `help:"Run CPU monitoring mode."`
+	Memory          bool `help:"Run memory monitoring mode."`
+	Network         bool `help:"Run network monitoring mode."`
+	Computer        bool `help:"Run full computer monitoring mode with notifications."`
+	IntervalSeconds int  `name:"interval" default:"10" help:"Seconds between computer checks."`
+}
+
 var deviceInfo DeviceInfo
 
 func main() {
+	cli := CommandLineOptions{}
+	kong.Parse(&cli,
+		kong.Name("gowhoatemy"),
+		kong.Description("Find what is slowing your computer down."),
+	)
+
 	err := getBasicDeviceInfo(&deviceInfo)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not get device info: ", err)
 		os.Exit(1)
 	}
 
-	for {
-		displayPrompt()
-
-		var mode int
-
-		_, err := fmt.Scan(&mode)
-		if err != nil {
-			fmt.Println("Please enter a number")
-			continue
-		}
-
-		switch mode {
-		case 1:
-			fmt.Println("CPU Monitoring Mode: ")
-			monitorCpu()
-		case 2:
-			fmt.Println("Memory Monitoring Mode: ")
-			monitorMemory()
-		case 3:
-			fmt.Println("Network Monitoring Mode: ")
-			monitorNetwork()
-		case 5:
-			fmt.Println("Hybrid Monitoring Mode: ")
-			monitorHybrid()
-		default:
-			fmt.Println("ERROR ERROR ERROR")
-		}
+	if runSelectedMode(cli) {
+		return
 	}
+
+	runInteractiveMenu()
 }
