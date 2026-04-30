@@ -76,15 +76,14 @@ Then run it from anywhere:
 gowhoatemy --computer
 ```
 
-Available flags:
+Flags available:
 
 ```bash
-gowhoatemy --cpu                         # shows CPU metrics
-gowhoatemy --memory                      # shows memory metrics
-gowhoatemy --network                     # shows network metrics
-gowhoatemy --computer                    # shows all computer metrics and sends notifications every 10 seconds
-gowhoatemy --computer --interval 20      # shows all computer metrics and checks every 20 seconds
-gowhoatemy --help                        # shows available flags
+gowhoatemy --cpu : gives you the cpu memtric 
+gowhoatemy --memory : gives you the memory metrics
+gowhoatemy --network : gives you network metrics
+gowhoatemy --computer : gives you all the computer metrics and sends out notification on new or abnormal events. to process every 10 seconds
+gowhoatemy --computer --interval [seconds]  gives you all the computer metrics and sends out notification on new or abnormal events
 ```
 
 
