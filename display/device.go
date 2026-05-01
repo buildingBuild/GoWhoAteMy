@@ -1,4 +1,4 @@
-package main
+package display
 
 import (
 	"fmt"
@@ -10,7 +10,18 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-func getBasicDeviceInfo(dInfo *DeviceInfo) error {
+type DeviceInfo struct {
+	OS                string
+	Platform          string
+	PlatformVersion   string
+	CPU               string
+	CPUUsage          float64
+	CPUCores          int32
+	DiskUsagePercent  float64
+	MemoryUsedPercent float64
+}
+
+func GetBasicDeviceInfo(dInfo *DeviceInfo) error {
 	info, err := host.Info()
 	if err != nil {
 		return fmt.Errorf("host.Info: %w", err)

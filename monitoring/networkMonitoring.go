@@ -1,4 +1,4 @@
-package main
+package monitoring
 
 import (
 	"fmt"
@@ -105,7 +105,7 @@ func monitorNetworkSnapshot() ([]NetworkSnapshot, error) {
 	return snapshots, nil
 }
 
-func monitorNetwork() {
+func MonitorNetwork() {
 	snapshots, err := monitorNetworkSnapshot()
 	if err != nil {
 		fmt.Println("error:", err)

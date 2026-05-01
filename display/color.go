@@ -1,4 +1,4 @@
-package main
+package display
 
 var Reset = "\033[0m"
 var Red = "\033[31m"

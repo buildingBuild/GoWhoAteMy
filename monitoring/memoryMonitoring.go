@@ -1,4 +1,4 @@
-package main
+package monitoring
 
 import (
 	"fmt"
@@ -80,7 +80,7 @@ func detectMemoryGrowth(current []MemorySnapshot, previous map[int32]MemorySnaps
 	}
 }
 
-func monitorMemory() {
+func MonitorMemory() {
 	virtualMemory, err := mem.VirtualMemory()
 	if err != nil {
 		fmt.Println("Error:", err)

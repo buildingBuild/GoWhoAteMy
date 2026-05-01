@@ -1,4 +1,4 @@
-package main
+package monitoring
 
 import (
 	"fmt"
@@ -60,7 +60,7 @@ func detectSpikes(current []CPUSnapshot, previous map[int32]CPUSnapshot) {
 		}
 
 		delta := cur.CPUPercent - prev.CPUPercent
-		if delta >= 15.0 {
+		if delta >= 8.0 {
 			message := fmt.Sprintf("%s CPU jumped from %.2f%% to %.2f%% (+%.2f%%)",
 				cur.Name, prev.CPUPercent, cur.CPUPercent, delta)
 
@@ -71,7 +71,7 @@ func detectSpikes(current []CPUSnapshot, previous map[int32]CPUSnapshot) {
 	}
 }
 
-func monitorCpu() {
+func MonitorCPU() {
 	currentSnapshots, err := monitorCPUSnapshot()
 	if err != nil {
 		fmt.Println("Error:", err)

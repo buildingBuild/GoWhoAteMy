@@ -1,15 +1,15 @@
-package main
+package display
 
 import "fmt"
 
-func displayPrompt() {
+func DisplayPrompt(deviceInfo DeviceInfo) {
 
 	fmt.Println("\nWelcome to GoWhoAteMyCPU!")
 	fmt.Println("")
 	fmt.Println("More info on features:")
 	fmt.Println("https://github.com/buildingBuild/GoWhoAteMyCPU")
 	fmt.Println("")
-	displayDeviceInfo(deviceInfo)
+	DisplayDeviceInfo(deviceInfo)
 
 	fmt.Println(Green + "\nOPTIONS: " + Reset)
 	fmt.Println("1. CPU Monitoring Mode:")

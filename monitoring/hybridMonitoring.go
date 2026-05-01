@@ -1,4 +1,4 @@
-package main
+package monitoring
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-func monitorHybrid(intervalSeconds int) {
+func MonitorComputer(intervalSeconds int) {
 	if intervalSeconds <= 0 {
 		intervalSeconds = 10
 	}

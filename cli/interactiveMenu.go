@@ -1,10 +1,15 @@
-package main
+package cli
 
-import "fmt"
+import (
+	"fmt"
 
-func runInteractiveMenu() {
+	"go-who-ate-my-cpu/display"
+	"go-who-ate-my-cpu/monitoring"
+)
+
+func RunInteractiveMenu(deviceInfo display.DeviceInfo) {
 	for {
-		displayPrompt()
+		display.DisplayPrompt(deviceInfo)
 
 		var mode int
 
@@ -17,16 +22,16 @@ func runInteractiveMenu() {
 		switch mode {
 		case 1:
 			fmt.Println("CPU Monitoring Mode: ")
-			monitorCpu()
+			monitoring.MonitorCPU()
 		case 2:
 			fmt.Println("Memory Monitoring Mode: ")
-			monitorMemory()
+			monitoring.MonitorMemory()
 		case 3:
 			fmt.Println("Network Monitoring Mode: ")
-			monitorNetwork()
+			monitoring.MonitorNetwork()
 		case 5:
 			fmt.Println("Hybrid Monitoring Mode: ")
-			monitorHybrid(10)
+			monitoring.MonitorComputer(10)
 		default:
 			fmt.Println("ERROR ERROR ERROR")
 		}

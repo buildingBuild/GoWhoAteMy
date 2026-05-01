@@ -1,8 +1,8 @@
-package main
+package display
 
 import "fmt"
 
-func displayDeviceInfo(dInfo DeviceInfo) {
+func DisplayDeviceInfo(dInfo DeviceInfo) {
 	fmt.Printf(
 		Red+"Device Info:\n"+Reset+
 			"OS: %s | Platform: %s\n"+
